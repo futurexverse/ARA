@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 340">
+  <defs>
+    <linearGradient id="gs" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fdf1b8"/><stop offset="50%" stop-color="#c69a33"/>
+      <stop offset="100%" stop-color="#8c6417"/>
+    </linearGradient>
+    <radialGradient id="ig" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#1c1a15"/><stop offset="100%" stop-color="#050505"/>
+    </radialGradient>
+  </defs>
+  <path d="M150 10 L285 66 L285 196 C285 262 224 310 150 330 C76 310 15 262 15 196 L15 66 Z" fill="url(#gs)"/>
+  <path d="M150 38 L262 84 L262 194 C262 246 213 286 150 303 C87 286 38 246 38 194 L38 84 Z" fill="url(#ig)"/>
+  <text x="150" y="215" text-anchor="middle" font-family="Arial Black, sans-serif"
+        font-size="110" font-weight="900" fill="#e6c463">ARA</text>
+</svg>

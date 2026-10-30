@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Outgoing Wire Transfer - Pending · Asset Recovery Alliance</title>
+<link rel="icon" type="image/png" href="Golden ARA Handshake Shield.png" />
+<style>
+  :root {
+    --navy: #0a1c36;
+    --navy-2: #0e2547;
+    --gold: #d4af37;
+    --gold-lt: #f6e27a;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
+    --line: #e2e8f0;
+    --line-subtle: #eef2f6;
+    --green: #15803d;
+    --green-dark: #166534;
+    --green-bg: #f0fbf4;
+    --green-border: #bbf7d0;
+    --amber: #d97706;
+    --amber-bg: #fff9ed;
+    --amber-border: #fde7bf;
+    --amber-badge: #f59e0b;
+    --blue: #2563eb;
+    --blue-hover: #1d4ed8;
+    --radius-card: 14px;
+    --radius-box: 9px;
+    --radius-btn: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    padding: 36px 16px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  /* Optional portal breadcrumb bar at the very top */
+  .top-brand-bar {
+    width: 100%;
+    max-width: 820px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--navy);
+  }
+  .brand-chip img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(212,175,55,.35));
+  }
+  .brand-chip .brand-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--navy-2);
+  }
+  .brand-chip .brand-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .back-top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    transition: background .15s, color .15s;
+  }
+  .back-top-btn:hover {
+    background: #f8fafc;
+    color: var(--blue-hover);
+  }
+
+  /* Receipt Card */
+  .receipt-card {
+    width: 100%;
+    max-width: 820px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+    padding: 30px 34px 28px;
+    position: relative;
+  }
+
+  /* Card Header */
+  .receipt-title {
+    font-size: 23px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+    margin-bottom: 16px;
+    line-height: 1.25;
+  }
+
+  /* Status Banner */
+  .status-banner {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-border);
+    border-radius: var(--radius-box);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .status-banner .status-lead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .status-banner .status-icon {
+    width: 19px;
+    height: 19px;
+    stroke: var(--amber);
+    flex-shrink: 0;
+  }
+  .status-banner .status-text {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .status-pill {
+    background: var(--amber-badge);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 14px;
+    border-radius: 9999px;
+    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.4;
+  }
+
+  /* Details Grid */
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+    margin-bottom: 22px;
+  }
+  .details-col {
+    display: flex;
+    flex-direction: column;
+  }
+  .field {
+    margin-bottom: 16px;
+  }
+  .field:last-child {
+    margin-bottom: 0;
+  }
+  .field-amount {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eef2f6;
+  }
+  .field-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+  }
+  .field-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.42;
+  }
+
+  /* Amount */
+  .amount-hero {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 2px;
+  }
+  .amount-hero .number {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--green);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  .amount-hero .currency {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  /* Green Clearance Box */
+  .clearance-box {
+    background: var(--green-bg);
+    border: 1px solid var(--green-border);
+    border-radius: var(--radius-box);
+    padding: 13px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .shield-icon {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .shield-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .clearance-content {
+    min-width: 0;
+  }
+  .clearance-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0c4a25;
+    line-height: 1.3;
+  }
+  .clearance-desc {
+    font-size: 13px;
+    color: #274836;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  /* Updated Balance Bar */
+  .balance-bar {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-box);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .balance-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .balance-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .balance-amount .number {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--green);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .balance-amount .currency {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .btn-download {
+    background: var(--green);
+    color: #ffffff;
+    border: 1px solid var(--green);
+    border-radius: var(--radius-btn);
+    padding: 11px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(16,24,40,.05);
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+  }
+  .btn-download:hover {
+    background: var(--green-dark);
+    border-color: var(--green-dark);
+  }
+  .btn-download:active {
+    transform: translateY(1px);
+  }
+  .btn-print {
+    background: #ffffff;
+    color: var(--text-primary);
+    border: 1px solid #d1d5db;
+    border-radius: var(--radius-btn);
+    padding: 11px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(16,24,40,.03);
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+  }
+  .btn-print:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+  }
+  .btn-print:active {
+    transform: translateY(1px);
+  }
+  .btn-download svg,
+  .btn-print svg {
+    flex-shrink: 0;
+  }
+
+  /* Back Links */
+  .back-footer {
+    text-align: center;
+    margin-top: 6px;
+    font-size: 13.5px;
+  }
+  .back-link {
+    color: var(--blue);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .back-link:hover {
+    color: var(--blue-hover);
+    text-decoration: underline;
+  }
+  .nav-divider {
+    color: #9ca3af;
+    margin: 0 8px;
+  }
+  .back-secondary {
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .back-secondary:hover {
+    color: var(--blue);
+    text-decoration: underline;
+  }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #1e293b;
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .25s ease, opacity .25s ease;
+    z-index: 100;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 680px) {
+    body {
+      padding: 16px 12px 32px;
+    }
+    .top-brand-bar {
+      margin-bottom: 12px;
+    }
+    .receipt-card {
+      padding: 22px 18px 22px;
+      border-radius: 12px;
+    }
+    .receipt-title {
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+    .details-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .amount-hero .number {
+      font-size: 28px;
+    }
+    .amount-hero .currency {
+      font-size: 18px;
+    }
+    .balance-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 14px 16px;
+    }
+    .balance-amount .number {
+      font-size: 23px;
+    }
+    .action-buttons {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    body {
+      background: #ffffff !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .no-print,
+    .top-brand-bar,
+    .action-buttons,
+    .back-footer,
+    .toast {
+      display: none !important;
+    }
+    .receipt-card {
+      border: 1px solid #cbd5e1 !important;
+      box-shadow: none !important;
+      padding: 24px 28px !important;
+      max-width: 100% !important;
+      page-break-inside: avoid;
+    }
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top Breadcrumb Bar -->
+  <div class="top-brand-bar no-print">
+    <a href="dashboard.html" class="brand-chip" title="Asset Recovery Alliance">
+      <img src="Golden ARA Handshake Shield.png" alt="ARA Crest" />
+      <div>
+        <div class="brand-title">ASSET RECOVERY ALLIANCE</div>
+        <div class="brand-sub">Official Wire Clearance Record</div>
+      </div>
+    </a>
+    <a href="account-activity.html" class="back-top-btn">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Account Activity
+    </a>
+  </div>
+
+  <!-- Receipt Main Card -->
+  <main class="receipt-card">
+
+    <!-- Card Title -->
+    <h1 class="receipt-title">Outgoing Wire Transfer - Pending</h1>
+
+    <!-- Status Banner -->
+    <div class="status-banner">
+      <div class="status-lead">
+        <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span class="status-text">Status</span>
+      </div>
+      <span class="status-pill">Pending</span>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="details-grid">
+
+      <!-- Left Column -->
+      <div class="details-col">
+        <div class="field field-amount">
+          <div class="field-label">Amount</div>
+          <div class="amount-hero">
+            <span class="number">$139,780.00</span>
+            <span class="currency">CAD</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">Transaction Type</div>
+          <div class="field-value">Outgoing Wire Transfer / International Wire</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">Date</div>
+          <div class="field-value">October 29, 2026, 17:00</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">From</div>
+          <div class="field-value">Asset Recovery Alliance</div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="details-col">
+        <div class="field">
+          <div class="field-label">Beneficiary / To</div>
+          <div class="field-value">Jeffrey Cohen</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">Bank</div>
+          <div class="field-value">TD - Toronto Dominion</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">Branch Address</div>
+          <div class="field-value">4840 Boulevard Saint-Jean, Pierrefonds QC H9H 4B2</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">Account Number</div>
+          <div class="field-value">45946281212</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">SWIFT/BIC</div>
+          <div class="field-value">TDOMCATT-TOR</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">Reference</div>
+          <div class="field-value">Wire Transfer / Incoming Transfer (matching the original)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pending Notice Box -->
+    <div class="clearance-box">
+      <div class="shield-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L4 5.5v5.5c0 5.25 3.4 10.15 8 11.35 4.6-1.2 8-6.1 8-11.35V5.5L12 2z" fill="#15803d"/>
+          <path d="M9 12l2 2 4-4" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="clearance-content">
+        <div class="clearance-title">Pending Receipt / Awaiting Final Clearance</div>
+        <div class="clearance-desc">This wire transfer is pending final clearance. Funds will be available once verification is complete.</div>
+      </div>
+    </div>
+
+    <!-- Updated Current Account Balance -->
+    <div class="balance-bar">
+      <span class="balance-label">Current Account Balance (Updated)</span>
+      <div class="balance-amount">
+        <span class="number">$178,331.32</span>
+        <span class="currency">CAD</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons no-print">
+      <button type="button" class="btn-download" id="downloadPdfBtn">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v12"/>
+          <path d="M7 10l5 5 5-5"/>
+          <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+        </svg>
+        <span>Download Receipt (PDF)</span>
+      </button>
+
+      <button type="button" class="btn-print" id="printReceiptBtn">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9V2h12v7"/>
+          <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+        <span>Print Receipt</span>
+      </button>
+    </div>
+
+    <!-- Back to Dashboard / Activity -->
+    <div class="back-footer no-print">
+      <a href="dashboard.html" class="back-link">Back to Dashboard</a>
+      <span class="nav-divider">·</span>
+      <a href="account-activity.html" class="back-secondary">Back to Account Activity</a>
+    </div>
+
+  </main>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toastNotice">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M8 12l2.5 2.5L16 9"/>
+    </svg>
+    <span id="toastMsg">Opening print dialog...</span>
+  </div>
+
+  <script>
+    (function() {
+      const downloadBtn = document.getElementById('downloadPdfBtn');
+      const printBtn = document.getElementById('printReceiptBtn');
+      const toast = document.getElementById('toastNotice');
+      const toastMsg = document.getElementById('toastMsg');
+
+      function showToast(message) {
+        toastMsg.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2600);
+      }
+
+      function handlePrint() {
+        showToast('Opening print dialog...');
+        setTimeout(() => {
+          window.print();
+        }, 300);
+      }
+
+      function handleDownloadPdf() {
+        showToast('Preparing PDF receipt for download...');
+        setTimeout(() => {
+          window.print();
+        }, 300);
+      }
+
+      if (downloadBtn) downloadBtn.addEventListener('click', handleDownloadPdf);
+      if (printBtn) printBtn.addEventListener('click', handlePrint);
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,743 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Customer Portfolio · Asset Recovery Alliance</title>
+<link rel="icon" type="image/png" href="Golden ARA Handshake Shield.png" />
+<style>
+  :root{
+    --navy:#0a1626;          /* sidebar / topbar base */
+    --navy-2:#0f2038;
+    --navy-line:rgba(255,255,255,.08);
+    --gold:#d4af37;
+    --gold-lt:#f6e27a;
+    --bg:#f3f5f7;            /* page canvas */
+    --card:#ffffff;
+    --line:#e8ecf1;
+    --line-2:#f0f3f6;
+    --text:#16202c;
+    --muted:#6b7a8c;
+    --blue:#1e66d0;
+    --blue-dk:#1a57b3;
+    --green:#1f9d61;
+    --green-bg:#e4f5ec;
+    --red:#d9534f;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);color:var(--text);font-size:14px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{text-decoration:none;color:inherit}
+
+  /* ================= layout ================= */
+  .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+  .main{min-width:0}
+
+  /* ================= sidebar ================= */
+  .sidebar{
+    position:sticky;top:0;height:100vh;overflow-y:auto;
+    background:linear-gradient(180deg,#0b1929 0%,var(--navy) 55%,#081220 100%);
+    color:#cdd7e3;display:flex;flex-direction:column;
+    border-right:1px solid rgba(212,175,55,.18);
+  }
+  .cust-head{
+    display:flex;gap:12px;align-items:center;
+    padding:20px 18px 16px;border-bottom:1px solid var(--navy-line);
+  }
+  .cust-head .crest{width:52px;height:52px;flex:none;object-fit:contain;display:block;background:transparent;filter:drop-shadow(0 4px 10px rgba(212,175,55,.35))}
+  .cust-head h1{font-size:15.5px;font-weight:700;color:#fff;letter-spacing:.02em;line-height:1.25}
+  .cust-head p{font-size:11px;color:#7f93ab;margin-top:2px}
+
+  nav{padding:10px 0 18px;flex:1}
+  nav a{
+    display:flex;align-items:center;gap:12px;margin:1px 10px;
+    padding:11px 13px;border-radius:8px;
+    font-size:13.5px;color:#aebdcf;position:relative;
+    border:1px solid transparent;transition:background .15s,color .15s,border-color .15s;
+  }
+  nav a svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7;flex:none}
+  nav a:hover{background:rgba(255,255,255,.05);color:#fff}
+  nav a.current{
+    background:linear-gradient(90deg,rgba(30,102,208,.85),rgba(30,102,208,.65));
+    color:#fff;border-color:rgba(255,255,255,.14);
+  }
+  nav a.current svg{stroke:#fff}
+  .nav-badge{
+    margin-left:auto;min-width:20px;height:20px;border-radius:999px;
+    background:var(--red);color:#fff;font-size:11px;font-weight:700;
+    display:grid;place-items:center;padding:0 6px;
+  }
+  .side-foot{
+    padding:14px 18px;border-top:1px solid var(--navy-line);
+    font-size:11px;color:#66788e;line-height:1.7;
+  }
+  .side-foot b{color:#93a5ba;font-weight:600}
+
+  /* ================= topbar ================= */
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;gap:18px;
+    background:linear-gradient(180deg,#0e2136 0%,var(--navy-2) 100%);
+    color:#dbe4ee;padding:12px 24px;
+    border-bottom:1px solid rgba(212,175,55,.25);
+  }
+  .global-search{flex:1;max-width:560px;position:relative;margin-left:8px}
+  .global-search svg.lead{
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    width:16px;height:16px;stroke:#8395ab;fill:none;stroke-width:1.8;
+  }
+  .global-search input{
+    width:100%;padding:10px 14px 10px 38px;border:0;border-radius:8px;
+    background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:13px;
+    outline:none;transition:background .2s,box-shadow .2s;
+  }
+  .global-search input::placeholder{color:#7c8ea5}
+  .global-search input:focus{background:rgba(255,255,255,.13);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+
+  .top-actions{margin-left:auto;display:flex;align-items:center;gap:18px}
+  .icon-btn{position:relative;display:flex;align-items:center;justify-content:center}
+  .icon-btn .bubble{
+    width:36px;height:36px;border-radius:999px;background:rgba(255,255,255,.08);
+    display:grid;place-items:center;cursor:pointer;transition:background .2s;
+  }
+  .icon-btn:hover .bubble{background:rgba(255,255,255,.16)}
+  .icon-btn svg{width:17px;height:17px;stroke:#dbe4ee;fill:none;stroke-width:1.7}
+  .icon-btn .count{
+    position:absolute;top:-3px;right:-5px;min-width:18px;height:18px;
+    border-radius:999px;background:var(--red);color:#fff;font-size:10.5px;font-weight:700;
+    display:grid;place-items:center;border:2px solid var(--navy-2);padding:0 4px;
+  }
+  .agent-chip{display:flex;align-items:center;gap:10px;text-align:left}
+  .agent-chip .who{font-size:12.5px;color:#e6edf5;line-height:1.4}
+  .agent-chip .status{display:flex;align-items:center;gap:5px;font-size:11px;color:#8fe3b0}
+  .agent-chip .status::before{
+    content:"";width:7px;height:7px;border-radius:50%;background:#2ecc71;
+    box-shadow:0 0 6px #2ecc71;
+  }
+  .agent-avatar{
+    width:36px;height:36px;border-radius:999px;flex:none;
+    background:linear-gradient(180deg,var(--gold-lt),var(--gold));
+    color:#141009;font-weight:700;font-size:12.5px;display:grid;place-items:center;
+  }
+
+  /* ================= content ================= */
+  .content{padding:26px 28px 40px;min-width:0}
+  .page-head{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+  .page-head h2{font-size:21px;font-weight:700;letter-spacing:-.01em}
+  .page-head p.sub{color:var(--muted);font-size:13px;margin-top:4px}
+  .head-actions{margin-left:auto;display:flex;gap:10px;align-items:center}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    border-radius:8px;padding:9px 15px;font-family:inherit;font-size:13px;font-weight:600;
+    border:1px solid transparent;transition:filter .15s, box-shadow .15s, transform .05s;
+  }
+  .btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9}
+  .btn:active{transform:translateY(1px)}
+  .btn-export{background:#fff;color:var(--text);border-color:var(--line);box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .btn-export:hover{background:#f7f9fb}
+  .btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 12px rgba(30,102,208,.28)}
+  .btn-blue:hover{background:var(--blue-dk)}
+  .btn-gold{background:linear-gradient(180deg,#f8e398,#dcb64d);color:#14100a;box-shadow:0 4px 12px rgba(212,175,55,.3)}
+
+  /* ---- stat cards ---- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+  .stat{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;display:flex;gap:14px;align-items:center;
+    box-shadow:0 1px 2px rgba(16,24,40,.04);transition:box-shadow .2s, transform .2s;
+  }
+  .stat:hover{box-shadow:0 6px 18px rgba(16,24,40,.08);transform:translateY(-1px)}
+  .stat .icon{
+    width:42px;height:42px;border-radius:999px;flex:none;display:grid;place-items:center;
+  }
+  .stat .icon svg{width:19px;height:19px;stroke-width:1.8;fill:none}
+  .stat .icon.blue{background:#e6effc}.stat .icon.blue svg{stroke:var(--blue)}
+  .stat .icon.gold{background:#fdf6dd}.stat .icon.gold svg{stroke:#b3892a}
+  .stat .icon.teal{background:#e3f4f1}.stat .icon.teal svg{stroke:#17877b}
+  .stat .icon.violet{background:#efeafb}.stat .icon.violet svg{stroke:#6d4fc4}
+  .stat .k{font-size:12px;color:var(--muted)}
+  .stat .v{font-size:20px;font-weight:700;letter-spacing:-.02em;margin-top:2px}
+  .stat .s{font-size:11.5px;color:#93a1b1;margin-top:2px}
+
+  /* ---- table card ---- */
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:0 1px 2px rgba(16,24,40,.04);
+  }
+  .panel-title{padding:20px 22px 6px;font-size:16.5px;font-weight:700}
+  .filters{
+    display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    padding:14px 22px 18px;border-bottom:1px solid var(--line);
+  }
+  .search-box{position:relative;flex:1;min-width:220px}
+  .search-box svg.lead{
+    position:absolute;left:11px;top:50%;transform:translateY(-50%);
+    width:15px;height:15px;stroke:#93a1b1;fill:none;stroke-width:1.8;
+  }
+  .search-box input{
+    width:100%;padding:9px 12px 9px 34px;border:1px solid var(--line);
+    border-radius:8px;font-family:inherit;font-size:13px;outline:none;
+    transition:border-color .2s, box-shadow .2s;color:var(--text);background:#fff;
+  }
+  .search-box input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(30,102,208,.12)}
+  select{
+    padding:9px 32px 9px 12px;border:1px solid var(--line);border-radius:8px;
+    font-family:inherit;font-size:13px;color:#46566a;background:#fff;outline:none;
+    appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2365748a' stroke-width='2.4'%3E%3Cpath d='M4 7h16M8 12h12M12 17h8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;
+  }
+  select:focus{border-color:var(--blue)}
+  .btn-filter{margin-left:auto}
+  .btn-filter svg{stroke:currentColor;fill:none;stroke-width:1.9}
+
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .table-scroll table{min-width:880px}
+  table{width:100%;border-collapse:collapse}
+  thead th{
+    font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+    color:#5c6b7d;text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);
+    background:#f8fafc;white-space:nowrap;
+  }
+  thead th:last-child{text-align:center}
+  tbody td{
+    padding:13px 14px;border-bottom:1px solid var(--line-2);
+    font-size:13.5px;color:#24303e;white-space:nowrap;
+  }
+  tbody tr:hover{background:#f8fafd}
+  tbody tr:last-child td{border-bottom:0}
+  tbody td.num{color:var(--muted);font-size:13px}
+  .cust-name{cursor:pointer;color:var(--blue);font-weight:600}
+  .cust-name .cust-link{color:inherit;font-weight:inherit}
+  .cust-name:hover .cust-link{text-decoration:underline}
+  .masked{font-family:"Consolas",monospace;color:#a6b2c0;letter-spacing:1px;font-size:12px}
+  .status-pill{
+    display:inline-block;padding:3px 11px;border-radius:999px;font-size:11.5px;font-weight:600;
+  }
+  .status-pill.active{background:var(--green-bg);color:var(--green)}
+  .status-pill.review{background:#fdf3e1;color:#a8720f}
+  .actions-link{
+    display:inline-block;padding:5px 11px;border:1px solid rgba(212,175,55,.55);
+    border-radius:6px;font-size:12px;font-weight:600;color:#8a6518;background:#fffef7;
+  }
+  .actions-link:hover{background:#fdf6dc}
+  .masked-actions{
+    display:inline-block;padding:5px 11px;border-radius:6px;font-size:12px;
+    background:transparent;border:1px solid var(--line);color:#b9c4d0;
+  }
+
+  .table-foot{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:16px 22px;border-top:1px solid var(--line);
+  }
+  .table-foot .info{font-size:12.5px;color:var(--muted)}
+  .pager{margin-left:auto;display:flex;gap:5px}
+  .pager button{
+    min-width:30px;height:30px;border:1px solid var(--line);background:#fff;
+    border-radius:6px;font-family:inherit;font-size:12.5px;color:#46566a;cursor:pointer;
+  }
+  .pager button:hover{border-color:var(--blue);color:var(--blue)}
+  .pager button.current{background:var(--blue);border-color:var(--blue);color:#fff}
+  .pager button.next{padding:0 12px;font-weight:600}
+
+  /* responsive */
+  .hamburger{display:none}
+  .brand-mini{display:none}
+  /* mobile page-title + account cards */
+  .page-title-bar{display:none}
+  .tlist{display:none}
+  @media (max-width:1100px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:860px){
+    .app{grid-template-columns:1fr}
+    .sidebar{display:none}
+    .sidebar.open{
+      display:block;position:fixed;inset:0 auto 0 0;width:236px;z-index:50;
+      box-shadow:0 0 0 100vmax rgba(0,0,0,.45);
+    }
+    .hamburger{display:grid;background:none;border:0;color:#dbe4ee;padding:6px;cursor:pointer;place-items:center}
+    .hamburger svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9}
+    .brand-mini{display:flex;align-items:center;gap:8px;font-weight:700;color:#fff;font-size:12.5px;letter-spacing:.04em}
+    .brand-mini img{width:38px;height:45px;flex:none;object-fit:contain;display:block;background:transparent;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+    .topbar{padding:10px 12px;gap:8px}
+    .content{padding:18px 12px 30px}
+    .page-head{gap:0}
+    .page-head h2{font-size:18.5px}
+    .head-actions{width:100%;flex-direction:column;align-items:stretch}
+    .head-actions .btn{justify-content:center;width:100%}
+    .stats{grid-template-columns:1fr 1fr;gap:10px}
+    .stat{padding:12px 13px;gap:10px}
+    .stat .icon{width:36px;height:36px}
+    .stat .icon svg{width:16px;height:16px}
+    .stat .v{font-size:16.5px}
+    .stat .s{display:none}
+    /* wide table -> page title + card list */
+    .table-scroll{display:none}
+    .tlist{display:block}
+    .page-title-bar{display:block;padding:16px 16px 12px;font-size:16px;font-weight:700}
+    .tcard{border-bottom:1px solid var(--line);padding:14px 16px;display:block}
+    .tcard:last-child{border-bottom:0}
+    .tcard .row1{display:flex;align-items:center;gap:8px}
+    .tcard .row1 .num{font-size:11.5px;color:#93a1b1}
+    .tcard .row1 .nm{font-weight:600;color:var(--blue);font-size:14.5px}
+    .tcard .tbl{margin-top:10px;display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:13px}
+    .tcard .tbl .k{color:#8b97a5}
+    .tcard .tbl .v{text-align:right;color:#24303e;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62vw}
+    .tcard .tbl .v.balance{font-weight:700}
+    .tcard .tactions{text-align:right;margin-top:12px}
+    .filters{padding:12px 12px 14px;gap:8px}
+    .search-box{min-width:0;flex-basis:100%}
+    .filters select{flex:1 1 auto;min-width:0;padding:9px 26px 9px 10px;font-size:12.5px}
+    .btn-filter{margin-left:0;flex-basis:100%;justify-content:center}
+    tbody td,thead th{padding:11px 10px}
+    .status-pill{padding:3px 9px;font-size:11px}
+    .cust-name .cust-link{pointer-events:none}
+    .table-foot{padding:13px 12px;gap:8px}
+    .table-foot .info{font-size:11.5px}
+    .pager{width:100%;margin-left:0;justify-content:center;flex-wrap:wrap}
+    .pager button{min-width:29px;height:29px;font-size:12px}
+  }
+  @media (max-width:420px){
+    .stats{grid-template-columns:1fr}
+    .stat .s{display:block}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ================= sidebar ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="cust-head">
+      <img class="crest" src="Golden ARA Handshake Shield.png" alt="Golden ARA Handshake Shield" />
+      <div>
+        <h1>ASSET RECOVERY ALLIANCE</h1>
+        <p>Customer Portfolio Overview</p>
+      </div>
+    </div>
+    <nav>
+      <a href="#" class="dashboard-link">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="current">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M3 20c0-3.4 2.7-5.4 6-5.4s6 2 6 5.4"/><path d="M16 8.6a3 3 0 110-1M18.5 20c0-2.6-1.7-4-3.6-4.6"/></svg>
+        Customer Portfolio
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+        Accounts
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24"><path d="M3 7h13M13 12h8M4 17h11"/><path d="M16 4l3 3-3 3M8 14l-3 3 3 3"/></svg>
+        Transactions
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24"><path d="M4 5a9 9 0 1016 5c0-5-4-8-8-8s-8 3-8 8v4a2 2 0 002 2h1"/><path d="M8 11h8M8 14h5"/></svg>
+        Customer Support
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        Emails
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        Reports
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 00-6 6v3l-2 3h16l-2-3V9a6 6 0 00-6-6z"/><path d="M10 18a2 2 0 004 0"/></svg>
+        Notifications
+        <span class="nav-badge">12</span>
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
+        Settings
+      </a>
+      <a href="index.html">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Logout
+      </a>
+    </nav>
+    <div class="side-foot">
+      Signed in as <b>Jcigar1@live.com</b><br />ara-portal v2.4.1
+    </div>
+  </aside>
+
+  <!-- ================= main ================= -->
+  <div class="main">
+    <!-- topbar -->
+    <header class="topbar">
+      <button class="hamburger" id="menuBtn" aria-label="Toggle menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <span class="brand-mini">
+        <img src="Golden ARA Handshake Shield.png" alt="Golden ARA Handshake Shield" />
+        ARA PORTAL
+      </span>
+      <div class="global-search">
+        <svg class="lead" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="globalSearch" type="search" placeholder="Search by name, email, account or phone..." />
+      </div>
+      <div class="top-actions">
+        <div class="icon-btn" title="Notifications">
+          <span class="bubble">
+            <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 00-6 6v3l-2 3h16l-2-3V9a6 6 0 00-6-6z"/><path d="M10 18a2 2 0 004 0"/></svg>
+          </span>
+          <span class="count">12</span>
+        </div>
+        <div class="icon-btn" title="Inbox">
+          <span class="bubble">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          </span>
+        </div>
+        <div class="icon-btn" title="Alerts">
+          <span class="bubble">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+          </span>
+          <span class="count">7</span>
+        </div>
+        <div class="agent-chip">
+          <div>
+            <div class="who">Jcigar1@live.com</div>
+            <div class="status">Online</div>
+          </div>
+          <span class="agent-avatar">AR</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- content -->
+    <main class="content">
+      <div class="page-head">
+        <div>
+          <h2>Customer Portfolio</h2>
+          <p class="sub">View and manage customer accounts and balances.</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-export" id="exportBtn">
+            <svg viewBox="0 0 24 24"><path d="M12 3v11M8 10l4 4 4-4"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            Export Report
+          </button>
+          <button class="btn btn-blue" id="addBtn">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Add New Customer
+          </button>
+        </div>
+      </div>
+
+      <!-- stats -->
+      <section class="stats">
+        <div class="stat">
+          <span class="icon blue">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M3 20c0-3.4 2.7-5.4 6-5.4s6 2 6 5.4"/><path d="M16 8.6a3 3 0 110-1"/></svg>
+          </span>
+          <div>
+            <div class="k">Total Customers</div>
+            <div class="v" id="statCustomers">1,582</div>
+            <div class="s">Active Customers</div>
+          </div>
+        </div>
+        <div class="stat">
+          <span class="icon teal">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/><path d="M9 13h6M9 16h6"/></svg>
+          </span>
+          <div>
+            <div class="k">Total Accounts</div>
+            <div class="v" id="statAccounts">9</div>
+            <div class="s">Active Accounts</div>
+          </div>
+        </div>
+        <div class="stat">
+          <span class="icon gold">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7a2.4 2.4 0 00-2.4 2.4c0 1.6 4.8 1.4 4.8 3.2a2.4 2.4 0 01-2.4 2.4m0-8v-1.5m0 11v-1.5"/></svg>
+          </span>
+          <div>
+            <div class="k">Total Balance (All Accounts)</div>
+            <div class="v" id="statBalance">$2,400,000.00</div>
+            <div class="s">All Customer Balances</div>
+          </div>
+        </div>
+        <div class="stat">
+          <span class="icon violet">
+            <svg viewBox="0 0 24 24"><path d="M22 16.9v2a2 2 0 01-2.2 2A16.8 16.8 0 013.5 4.2 2 2 0 015.5 2h2a2 2 0 012 1.7c.1 1 .4 2 .7 2.9a2 2 0 01-.4 2.1L8.7 9.9a13.5 13.5 0 005.4 5.4l1.2-1.1a2 2 0 012.1-.5c.9.3 1.9.6 2.9.7a2 2 0 011.7 2z"/></svg>
+          </span>
+          <div>
+            <div class="k">Today's Inquiries</div>
+            <div class="v" id="statInquiries">320</div>
+            <div class="s">Total Inquiries</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- accounts table -->
+      <section class="panel">
+        <h3 class="panel-title">All Customer Accounts</h3>
+        <div class="filters">
+          <div class="search-box">
+            <svg class="lead" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input id="customerSearch" type="search" placeholder="Search customers..." />
+          </div>
+          <select id="fltAccount" aria-label="Filter by account">
+            <option>All Accounts</option><option>With balances</option><option>Dormant</option>
+          </select>
+          <select id="fltType" aria-label="Filter by account type">
+            <option>All Account Types</option><option>Checking</option><option>Savings</option><option>Brokerage</option><option>Custody</option>
+          </select>
+          <select id="fltStatus" aria-label="Filter by status">
+            <option>All Status</option><option>Active</option><option>Under Review</option>
+          </select>
+          <button class="btn btn-export btn-filter" id="filterBtn">
+            <svg viewBox="0 0 24 24"><path d="M4 5h16L14 12v6l-4 2v-8z"/></svg>
+            Filter
+          </button>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Customer Name</th>
+                <th>Email Address</th>
+                <th>Account Number</th>
+                <th>Account Type</th>
+                <th>Account Status</th>
+                <th>Account Balance</th>
+                <th>Last Login</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="accountsBody">
+              <tr class="visible">
+                <td class="num">1</td>
+                <td><span class="cust-name" data-full="Jeffrey Cohen"><a class="cust-link" href="account-activity.html" title="View account activity">Jeffrey Cohen</a></span></td>
+                <td class="unmasked">jcigar1@live.com</td>
+                <td class="unmasked">100429500422</td>
+                <td>Checking</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="unmasked">$127,580.00</td>
+                <td>Oct 29, 2026 18:04 PM</td>
+                <td style="text-align:center"><a href="account-activity.html" class="actions-link">Account Activity</a></td>
+              </tr>
+              <tr>
+                <td class="num">2</td>
+                <td><span class="cust-name masked" data-full="Marla Snead">•••••••••</span></td>
+                <td class="masked">•••••••••</td>
+                <td class="masked">••••••••••••</td>
+                <td>Savings</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="masked">••••••••••</td>
+                <td>Jan 28, 2026 09:15 AM</td>
+                <td style="text-align:center"><span class="masked-actions">••••••••••••••</span></td>
+              </tr>
+              <tr>
+                <td class="num">3</td>
+                <td><span class="cust-name masked" data-full="D. Whitfield">•••••••••</span></td>
+                <td class="masked">•••••••••</td>
+                <td class="masked">••••••••••••</td>
+                <td>Savings</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="masked">••••••••••</td>
+                <td>Mar 12, 2026 14:30 PM</td>
+                <td style="text-align:center"><span class="masked-actions">••••••••••••••</span></td>
+              </tr>
+              <tr>
+                <td class="num">4</td>
+                <td><span class="cust-name masked" data-full="K. Romanov">•••••••••</span></td>
+                <td class="masked">•••••••••</td>
+                <td class="masked">••••••••••••</td>
+                <td>Checking</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="masked">••••••••••</td>
+                <td>Jun 05, 2026 11:42 AM</td>
+                <td style="text-align:center"><span class="masked-actions">••••••••••••••</span></td>
+              </tr>
+              <tr>
+                <td class="num">5</td>
+                <td><span class="cust-name masked" data-full="S. Adeyemi">•••••••••</span></td>
+                <td class="masked">•••••••••</td>
+                <td class="masked">••••••••••••</td>
+                <td>Savings</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="masked">••••••••••</td>
+                <td>Sep 19, 2026 16:08 PM</td>
+                <td style="text-align:center"><span class="masked-actions">••••••••••••••</span></td>
+              </tr>
+              <tr>
+                <td class="num">6</td>
+                <td><span class="cust-name masked" data-full="R. Calloway">•••••••••</span></td>
+                <td class="masked">•••••••••</td>
+                <td class="masked">••••••••••••</td>
+                <td>Checking</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="masked">••••••••••</td>
+                <td>Feb 14, 2026 08:22 AM</td>
+                <td style="text-align:center"><span class="masked-actions">••••••••••••••</span></td>
+              </tr>
+              <tr>
+                <td class="num">7</td>
+                <td><span class="cust-name masked" data-full="T. Nguyen">•••••••••</span></td>
+                <td class="masked">•••••••••</td>
+                <td class="masked">••••••••••••</td>
+                <td>Brokerage</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="masked">••••••••••</td>
+                <td>Apr 30, 2026 13:15 PM</td>
+                <td style="text-align:center"><span class="masked-actions">••••••••••••••</span></td>
+              </tr>
+              <tr>
+                <td class="num">8</td>
+                <td><span class="cust-name masked" data-full="E. Kowalski">•••••••••</span></td>
+                <td class="masked">•••••••••</td>
+                <td class="masked">••••••••••••</td>
+                <td>Savings</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="masked">••••••••••</td>
+                <td>Jul 22, 2026 10:05 AM</td>
+                <td style="text-align:center"><span class="masked-actions">••••••••••••••</span></td>
+              </tr>
+              <tr>
+                <td class="num">9</td>
+                <td><span class="cust-name masked" data-full="P. Mensah">•••••••••</span></td>
+                <td class="masked">•••••••••</td>
+                <td class="masked">••••••••••••</td>
+                <td>Checking</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="masked">••••••••••</td>
+                <td>May 18, 2026 15:50 PM</td>
+                <td style="text-align:center"><span class="masked-actions">••••••••••••••</span></td>
+              </tr>
+              <tr>
+                <td class="num">10</td>
+                <td><span class="cust-name masked" data-full="A. Nakamura">•••••••••</span></td>
+                <td class="masked">•••••••••</td>
+                <td class="masked">••••••••••••</td>
+                <td>Savings</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td class="masked">••••••••••</td>
+                <td>Aug 08, 2026 12:12 PM</td>
+                <td style="text-align:center"><span class="masked-actions">••••••••••••••</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- mobile card list (built from the table by JS) -->
+        <div class="tlist" id="accountCards" aria-live="polite"></div>
+        <div class="page-title-bar">All Customer Accounts</div>
+
+        <div class="table-foot">
+          <span class="info">Showing 1 to 10 of 1,522 entries</span>
+          <div class="pager" id="pager">
+            <button aria-label="Previous">&lsaquo;</button>
+            <button class="current">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>4</button>
+            <button>5</button>
+            <button>...</button>
+            <button>159</button>
+            <button class="next">Next &rsaquo;</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+
+  /* sidebar toggle (mobile) */
+  $("menuBtn").addEventListener("click", () => $("sidebar").classList.toggle("open"));
+
+  /* client-side table search */
+  const rows = Array.from($("accountsBody").querySelectorAll("tr"));
+  function renderVisibleCards(){
+    if (!$("accountCards")) return;
+    $("accountCards").innerHTML = rows
+      .filter(r => r.style.display !== "none")
+      .map(r => {
+        const c = Array.from(r.children);
+        const num = c[0].textContent.trim();
+        const nameHTML = c[1].innerHTML;
+        const email = c[2].textContent.trim();
+        const acct  = c[3].textContent.trim();
+        const type  = c[4].textContent.trim();
+        const status= c[5].textContent.trim();
+        const amtHtml = c[6].innerHTML;
+        const last  = c[7].textContent.trim();
+        const actHtml = c[8].innerHTML;
+        const amt = (c[6].querySelector(".amount")?.textContent || c[6].textContent).trim();
+        const cls = (c[6].querySelector(".amount")?.className || "").split(" ")[0];
+        const amtSpan = `<span class="${cls}" style="font-weight:700;color:${cls === "neg" ? "#d24b4e" : cls === "pos" ? "#1f8a4c" : "inherit"}">${amt}</span>`;
+        return `
+        <div class="tcard">
+          <div class="row1"><span class="num">${num}</span><span class="nm">${nameHTML}</span></div>
+          <div class="tbl">
+            <span class="k">Email</span><span class="v">${email}</span>
+            <span class="k">Account No.</span><span class="v">${acct}</span>
+            <span class="k">Type</span><span class="v">${type}</span>
+            <span class="k">Status</span><span class="v">${status}</span>
+            <span class="k">Balance</span><span class="v">${amtSpan}</span>
+            <span class="k">Last Login</span><span class="v">${last}</span>
+          </div>
+          <div class="tactions">${actHtml}</div>
+        </div>`;
+      })
+      .join("");
+  }
+  renderVisibleCards();
+
+  $("customerSearch").addEventListener("input", e => {
+    const q = e.target.value.trim().toLowerCase();
+    rows.forEach(r => {
+      const text = r.innerText.toLowerCase();
+      const hit = !q || text.includes(q);
+      r.style.display = hit ? "" : "none";
+    });
+    renderVisibleCards();
+  });
+
+  /* unmask on click (demo permission gate - wire to backend access rules) */
+  document.querySelectorAll(".cust-name.masked").forEach(el => {
+    el.addEventListener("dblclick", () => {
+      el.textContent = el.dataset.full;
+      el.classList.remove("masked");
+    });
+  });
+
+  /* export */
+  $("exportBtn").addEventListener("click", () => alert("Demo: wire this to your report generator (CSV / PDF export of the filtered dataset)."));
+
+  /* add customer */
+  $("addBtn").addEventListener("click", () => alert("Demo: wire this to your 'Add New Customer' onboarding form."));
+
+  /* filter dropdowns (demo) */
+  $("filterBtn").addEventListener("click", () => {
+    const type = $("fltType").value, status = $("fltStatus").value;
+    rows.forEach(r => {
+      const c = r.children;
+      const typeOk = type === "All Account Types" || c[4].textContent.trim().includes(type.split(" ")[0]);
+      const statusOk = status === "All Status" || c[5].textContent.trim() === status.toLowerCase();
+      r.style.display = (typeOk && statusOk) ? "" : "none";
+    });
+    renderVisibleCards();
+  });
+
+  /* pager (demo) */
+  $("pager").addEventListener("click", e => {
+    if (e.target.tagName !== "BUTTON") return;
+    document.querySelectorAll("#pager button").forEach(b => b.classList.remove("current"));
+    e.target.classList.add("current");
+  });
+})();
+</script>
+</body>
+</html>
